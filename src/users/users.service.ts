@@ -21,6 +21,10 @@ export class UsersService {
     return this.userRepository.find({ relations: ['tasks'] });
   }
 
+  async findByEmail(email: string): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
   async findOne(id: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },

@@ -6,7 +6,7 @@ import * as fs from 'fs';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: '51.12.50.155',
+      host: 'localhost',
       ssl: false, // Azure VM's public IP
       port: 5432,
       username: 'postgres', // Default user (change if modified)

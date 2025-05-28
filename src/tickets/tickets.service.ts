@@ -33,8 +33,25 @@ export class TicketsService {
 
   // In tickets.service.ts
   async getAllTickets() {
-    // Implementation depends on your data layer (TypeORM, Prisma, etc.)
-    return await this.ticketRepository.find(); // Example for TypeORM
+    return await this.ticketRepository.find({
+      relations: ['createdBy'],
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+        status: true,
+        priority: true,
+        createdAt: true,
+        updatedAt: true,
+        createdBy: {
+          id: true,
+          name: true,
+          email: true,
+          // Don't include sensitive fields like password
+        },
+      },
+    });
   }
 
   async addMessage(

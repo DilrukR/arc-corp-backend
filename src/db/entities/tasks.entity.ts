@@ -8,9 +8,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToOne,
 } from 'typeorm';
-import { User } from './user.entity'; // Assume User entity exists
-import { SubTask } from './subtasks.entity'; // Optional for subtasks
+import { User } from './user.entity';
+import { SubTask } from './subtasks.entity';
+import { Department } from './departments.entity';
 
 @Entity('tasks')
 export class Task {
@@ -23,19 +25,11 @@ export class Task {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({
-    type: 'enum',
-    enum: [
-      'Finance',
-      'IT',
-      'Procurement',
-      'Cleaning',
-      'Logistics',
-      'Miscellaneous',
-    ],
-    nullable: false,
-  })
-  category: string;
+  @Column({ nullable: false })
+  departmentId: number;
+
+  @ManyToOne(() => Department, { eager: true, onDelete: 'RESTRICT' })
+  department: Department;
 
   @Column({
     type: 'enum',
@@ -47,7 +41,6 @@ export class Task {
   @Column({ type: 'timestamp', nullable: true })
   deadline: Date;
 
-  // Many-to-Many: Tasks can be assigned to multiple users
   @ManyToMany(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'assignments', // Join table name

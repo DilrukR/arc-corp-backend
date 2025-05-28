@@ -6,14 +6,15 @@ import * as fs from 'fs';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost', // Use 'localhost' for local development
+      host: '51.12.50.155',
       ssl: false, // Azure VM's public IP
       port: 5432,
       username: 'postgres', // Default user (change if modified)
       password: 'rishan1234@4321', // Password you set earlier
-      database: 'archcorp', // Your database name
+      database: 'arc_corp', // Your database name
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // Auto-create tables (disable in production)
+      logging: true,
     }),
   ],
 })

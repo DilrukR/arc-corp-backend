@@ -30,15 +30,19 @@ export class User {
   @Column({ default: 'employee' })
   role: 'admin' | 'manager' | 'employee';
 
+  // Add the missing departmentId column
+  @Column({ nullable: true })
+  departmentId: number;
+
+  @ManyToOne(() => Department, (department) => department.users)
+  @JoinColumn({ name: 'departmentId' })
+  department: Department;
+
   @OneToMany(() => Ticket, (ticket) => ticket.createdBy)
   createdTickets: Ticket[];
 
   @OneToMany(() => Ticket, (ticket) => ticket.assignedTo)
   assignedTickets: Ticket[];
-
-  @ManyToOne(() => Department, (department) => department.users)
-  @JoinColumn({ name: 'department_id' })
-  department: Department;
 
   @ManyToMany(() => Task, (task) => task.assignedTo)
   tasks: Task[];

@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { User } from '../db/entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Department } from '../db/entities/departments.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Department)
+    private readonly departmentRepository: Repository<Department>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -37,13 +40,28 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    // Optional: Validate department exists if departmentId is provided
+    if (updateUserDto.departmentId) {
+      const department = await this.departmentRepository.findOne({
+        where: { departmentId: updateUserDto.departmentId, isActive: true },
+      });
+
+      if (!department) {
+        throw new NotFoundException(
+          `Active department with ID ${updateUserDto.departmentId} not found`,
+        );
+      }
+    }
+
     const user = await this.userRepository.preload({
       id,
       ...updateUserDto,
     });
+
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
+
     return this.userRepository.save(user);
   }
 

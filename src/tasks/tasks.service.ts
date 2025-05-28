@@ -60,7 +60,6 @@ export class TasksService {
       throw new NotFoundException(`Task with ID ${taskId} not found`);
     }
 
-    // Handle relation preservation (if needed)
     if (task.assignedTo?.length) {
       task.assignedTo = await this.userRepository.findByIds(
         task.assignedTo.map((user) => user.id),
@@ -69,13 +68,40 @@ export class TasksService {
 
     return this.taskRepository.save(task);
   }
-  // Get all tasks
+
   async findAll(): Promise<Task[]> {
     return this.taskRepository.find({ relations: ['assignedTo', 'subtasks'] });
   }
 
-  // Delete a task (soft delete)
   async remove(id: number): Promise<void> {
     await this.taskRepository.softDelete(id);
+  }
+
+  async getOngoingTasksCount(): Promise<number> {
+    return await this.taskRepository.count({
+      where: {
+        status: 'ongoing',
+      },
+    });
+  }
+
+  async getOngoingTasksByDepartment(): Promise<
+    {
+      departmentId: number;
+      departmentName: string;
+      count: number;
+    }[]
+  > {
+    return await this.taskRepository
+      .createQueryBuilder('task')
+      .leftJoin('task.department', 'department')
+      .select([
+        'department.id as departmentId',
+        'department.name as departmentName',
+        'COUNT(task.id) as count',
+      ])
+      .where('task.status = :status', { status: 'ongoing' })
+      .groupBy('department.id')
+      .getRawMany();
   }
 }

@@ -30,6 +30,16 @@ export class TasksController {
     return this.tasksService.findAll();
   }
 
+  @Get('ongoing/count')
+  getOngoingTasksCount() {
+    return this.tasksService.getOngoingTasksCount();
+  }
+
+  @Get('ongoing/departments')
+  getOngoingTasksByDepartment() {
+    return this.tasksService.getOngoingTasksByDepartment();
+  }
+
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateTaskDto: UpdateTaskDto) {
     return this.tasksService.update(id, updateTaskDto);

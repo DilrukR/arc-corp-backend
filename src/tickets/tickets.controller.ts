@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tickets')
 export class TicketsController {
@@ -9,7 +10,8 @@ export class TicketsController {
 
   @Post()
   create(@Body() createTicketDto: CreateTicketDto) {
-    return this.ticketsService.createTicket(createTicketDto, null);
+    console.log('Creating ticket:', createTicketDto);
+    return this.ticketsService.createTicket(createTicketDto, 1); // No user ID);
   }
 
   @Post(':id/messages')

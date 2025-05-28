@@ -12,7 +12,17 @@ import { CommonModule } from './common/common.module';
 import { TicketsModule } from './tickets/tickets.module';
 
 @Module({
-  imports: [DbModule, AuthModule, UsersModule, TasksModule, AssignmentsModule, SubtasksModule, DepartmentsModule, CommonModule, TicketsModule],
+  imports: [
+    DbModule,
+    AuthModule,
+    UsersModule,
+    TasksModule,
+    AssignmentsModule,
+    SubtasksModule,
+    DepartmentsModule,
+    CommonModule,
+    TicketsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

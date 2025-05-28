@@ -8,6 +8,7 @@ import { Ticket } from '../db/entities/ticket.entity';
 import { TicketMessage } from '../db/entities/ticket-message.entity';
 import { User } from '../db/entities/user.entity';
 import { UsersModule } from '../users/users.module';
+import { TicketsController } from './tickets.controller';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UsersModule } from '../users/users.module';
     }),
     UsersModule,
   ],
+  controllers: [TicketsController],
   providers: [TicketsGateway, TicketsService],
 })
 export class TicketsModule {}

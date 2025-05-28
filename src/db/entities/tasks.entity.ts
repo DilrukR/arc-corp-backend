@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
+  JoinColumn, // Add this import
 } from 'typeorm';
 import { User } from './user.entity';
 import { SubTask } from './subtasks.entity';
@@ -29,6 +30,7 @@ export class Task {
   departmentId: number;
 
   @ManyToOne(() => Department, { eager: true, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'departmentId' }) // Add this line
   department: Department;
 
   @Column({
@@ -43,23 +45,21 @@ export class Task {
 
   @ManyToMany(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
   @JoinTable({
-    name: 'assignments', // Join table name
+    name: 'assignments',
     joinColumn: { name: 'task_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
   })
   assignedTo: User[];
 
-  // One-to-Many: A task can have multiple subtasks (optional)
   @OneToMany(() => SubTask, (subTask) => subTask.task, { cascade: true })
   subtasks: SubTask[];
 
-  // Timestamps
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' }) // Soft delete
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 }

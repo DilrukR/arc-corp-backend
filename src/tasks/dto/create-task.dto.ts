@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsDateString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsDateString,
+  IsPositive,
+  IsNumber,
+} from 'class-validator';
 
 export enum TaskCategory {
   FINANCE = 'Finance',
@@ -15,6 +22,10 @@ export class CreateTaskDto {
 
   @IsOptional()
   description?: string;
+
+  @IsNumber()
+  @IsPositive()
+  departmentId: number;
 
   @IsEnum(TaskCategory)
   category: TaskCategory;

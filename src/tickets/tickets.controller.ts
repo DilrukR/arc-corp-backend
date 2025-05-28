@@ -26,6 +26,11 @@ export class TicketsController {
     );
   }
 
+  @Get()
+  getAllTickets() {
+    return this.ticketsService.getAllTickets();
+  }
+
   @Patch(':id/assign')
   assignTicket(
     @Param('id') ticketId: string,

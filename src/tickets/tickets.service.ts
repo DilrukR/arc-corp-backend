@@ -31,6 +31,12 @@ export class TicketsService {
     return this.ticketRepository.save(ticket);
   }
 
+  // In tickets.service.ts
+  async getAllTickets() {
+    // Implementation depends on your data layer (TypeORM, Prisma, etc.)
+    return await this.ticketRepository.find(); // Example for TypeORM
+  }
+
   async addMessage(
     ticketId: number,
     createMessageDto: CreateMessageDto,

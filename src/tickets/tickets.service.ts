@@ -32,27 +32,33 @@ export class TicketsService {
   }
 
   // In tickets.service.ts
-  async getAllTickets() {
-    return await this.ticketRepository.find({
-      relations: ['createdBy'],
-      select: {
+ async getAllTickets() {
+  return await this.ticketRepository.find({
+    relations: ['createdBy', 'assignedTo'],
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      category: true,
+      status: true,
+      priority: true,
+      createdAt: true,
+      updatedAt: true,
+      createdBy: {
         id: true,
-        title: true,
-        description: true,
-        category: true,
-        status: true,
-        priority: true,
-        createdAt: true,
-        updatedAt: true,
-        createdBy: {
-          id: true,
-          name: true,
-          email: true,
-          // Don't include sensitive fields like password
-        },
+        name: true,
+        email: true,
       },
-    });
-  }
+      assignedTo: {
+        id: true,
+        name: true,
+        email: true,
+        role: true, // Include role if needed
+      },
+    },
+  });
+}
+
 
   async addMessage(
     ticketId: number,

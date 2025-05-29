@@ -49,4 +49,9 @@ export class TasksController {
   remove(@Param('id') id: number) {
     return this.tasksService.remove(id);
   }
+
+  @Get('department-wise-count')
+  getTaskCountsByDepartment() {
+    return this.tasksService.getTaskCountsByDepartment();
+  }
 }

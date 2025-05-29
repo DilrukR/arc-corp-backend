@@ -40,13 +40,11 @@ export class TasksService {
     id: number | string,
     updateTaskDto: UpdateTaskDto,
   ): Promise<Task> {
-    // Convert ID to number if it's a string
     const taskId = typeof id === 'string' ? parseInt(id, 10) : id;
 
     console.log('Updating task with ID:', taskId, typeof taskId);
     console.log('Update data:', updateTaskDto);
 
-    // Verify numeric ID
     if (isNaN(taskId)) {
       throw new BadRequestException(`Invalid task ID: ${id}`);
     }
@@ -79,9 +77,8 @@ export class TasksService {
 
   async getOngoingTasksCount(): Promise<number> {
     return await this.taskRepository.count({
-      where: {
-        status: 'ongoing',
-      },
+      where: { status: 'in_progress' },
+      relations: ['assignedTo'],
     });
   }
 
@@ -102,6 +99,33 @@ export class TasksService {
       ])
       .where('task.status = :status', { status: 'ongoing' })
       .groupBy('department.id')
+      .getRawMany();
+  }
+
+  async getTaskCountsByDepartment() {
+    return await this.taskRepository
+      .createQueryBuilder('task')
+      .leftJoin('task.department', 'department')
+      .select('department.name', 'departmentName')
+      .addSelect('department.departmentId', 'departmentId')
+      .addSelect(
+        "COALESCE(SUM(CASE WHEN task.status = 'pending' THEN 1 ELSE 0 END), 0)",
+        'pending',
+      )
+      .addSelect(
+        "COALESCE(SUM(CASE WHEN task.status = 'in_progress' THEN 1 ELSE 0 END), 0)",
+        'in_progress',
+      )
+      .addSelect(
+        "COALESCE(SUM(CASE WHEN task.status = 'completed' THEN 1 ELSE 0 END), 0)",
+        'completed',
+      )
+      .addSelect(
+        "COALESCE(SUM(CASE WHEN task.status = 'cancelled' THEN 1 ELSE 0 END), 0)",
+        'cancelled',
+      )
+      .where('task.deleted_at IS NULL')
+      .groupBy('department.departmentId, department.name')
       .getRawMany();
   }
 }

@@ -26,13 +26,28 @@ export class TasksService {
   }
 
   // Assign task to users
+  // tasks.service.ts
   async assignTask(taskId: number, userIds: number[]): Promise<Task> {
-    const task = await this.taskRepository.findOne({ where: { id: taskId } });
-    if (!task) throw new NotFoundException('Task not found');
+    // Use 'assignedTo' instead of 'assignedUsers'
+    const task = await this.taskRepository.findOne({
+      where: { id: taskId },
+      relations: ['assignedTo'], // Changed from 'assignedUsers' to 'assignedTo'
+    });
 
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${taskId} not found`);
+    }
+
+    // Validate users exist
     const users = await this.userRepository.findByIds(userIds);
-    task.assignedTo = users;
-    return this.taskRepository.save(task);
+    if (users.length !== userIds.length) {
+      throw new BadRequestException('One or more user IDs are invalid');
+    }
+
+    // Assign users to task using the correct property name
+    task.assignedTo = [...task.assignedTo, ...users];
+
+    return await this.taskRepository.save(task);
   }
 
   // Update task status or details
@@ -136,5 +151,45 @@ export class TasksService {
       completed: parseInt(item.completed, 10),
       cancelled: parseInt(item.cancelled, 10),
     }));
+  }
+
+  async getTasksByDepartment(departmentId: number): Promise<Task[]> {
+    const tasks = await this.taskRepository.find({
+      where: { departmentId },
+      relations: ['assignedTo', 'subtasks'],
+    });
+
+    if (!tasks.length) {
+      throw new NotFoundException(
+        `No tasks found for department ID ${departmentId}`,
+      );
+    }
+
+    return tasks;
+  }
+
+  async getTaskById(id: number): Promise<Task> {
+    const task = await this.taskRepository.findOne({
+      where: { id },
+      relations: ['assignedTo', 'subtasks'],
+    });
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+
+    return task;
+  }
+  async getTasksByUser(userId: number): Promise<Task[]> {
+    const tasks = await this.taskRepository
+      .createQueryBuilder('task')
+      .leftJoinAndSelect('task.assignedTo', 'user')
+      .where('user.id = :userId', { userId })
+      .andWhere('task.deleted_at IS NULL')
+      .getMany();
+    if (!tasks.length) {
+      throw new NotFoundException(`No tasks found for user ID ${userId}`);
+    }
+    return tasks;
   }
 }

@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -14,4 +20,8 @@ export class CreateUserDto {
 
   @IsString()
   role?: 'admin' | 'manager' | 'employee' = 'employee';
+
+  @IsNumber()
+  @IsNotEmpty()
+  departmentId?: number; // Assuming departmentId is a number, adjust type as necessary
 }

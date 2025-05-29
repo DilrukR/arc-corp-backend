@@ -10,6 +10,7 @@ import { SubtasksModule } from './subtasks/subtasks.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { CommonModule } from './common/common.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TicketsModule } from './tickets/tickets.module';
     DepartmentsModule,
     CommonModule,
     TicketsModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

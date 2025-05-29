@@ -71,4 +71,21 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
   }
+
+  async getUserByDepartment(departmentId: number): Promise<User[]> {
+    const department = await this.departmentRepository.findOne({
+      where: { departmentId, isActive: true },
+    });
+
+    if (!department) {
+      throw new NotFoundException(
+        `Department with ID ${departmentId} not found`,
+      );
+    }
+
+    return this.userRepository.find({
+      where: { departmentId },
+      relations: ['department'],
+    });
+  }
 }

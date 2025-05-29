@@ -5,11 +5,15 @@ import {
   Body,
   Patch,
   Param,
+  UsePipes,
+  ValidationPipe,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { AssignTaskDto } from './dto/assign-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -21,8 +25,12 @@ export class TasksController {
   }
 
   @Post(':id/assign')
-  assignTask(@Param('id') taskId: number, @Body() userIds: number[]) {
-    return this.tasksService.assignTask(taskId, userIds);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  assignTask(
+    @Param('id', ParseIntPipe) taskId: number,
+    @Body() assignTaskDto: AssignTaskDto,
+  ) {
+    return this.tasksService.assignTask(taskId, assignTaskDto.userIds);
   }
 
   @Get()
@@ -53,5 +61,15 @@ export class TasksController {
   @Get('department-wise-count')
   getTaskCountsByDepartment() {
     return this.tasksService.getTaskCountsByDepartment();
+  }
+
+  @Get('task-by-department/:departmentId')
+  getTasksByDepartment(@Param('departmentId') departmentId: number) {
+    return this.tasksService.getTasksByDepartment(departmentId);
+  }
+
+  @Get('user-tasks/:userId')
+  getTasksByUserId(@Param('userId') userId: number) {
+    return this.tasksService.getTasksByUser(userId);
   }
 }

@@ -39,4 +39,9 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
+
+  @Get('get-user-by-department/:departmentId')
+  getUserByDepartment(@Param('departmentId') departmentId: number) {
+    return this.usersService.getUserByDepartment(departmentId);
+  }
 }

@@ -9,11 +9,12 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
-  JoinColumn, // Add this import
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { SubTask } from './subtasks.entity';
 import { Department } from './departments.entity';
+import { Comment } from './comment.entity'; // Add this import
 
 @Entity('tasks')
 export class Task {
@@ -30,7 +31,7 @@ export class Task {
   departmentId: number;
 
   @ManyToOne(() => Department, { eager: true, onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'departmentId' }) // Add this line
+  @JoinColumn({ name: 'departmentId' })
   department: Department;
 
   @Column({
@@ -53,6 +54,10 @@ export class Task {
 
   @OneToMany(() => SubTask, (subTask) => subTask.task, { cascade: true })
   subtasks: SubTask[];
+
+  // Add comments relationship
+  @OneToMany(() => Comment, (comment) => comment.task, { cascade: true })
+  comments: Comment[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

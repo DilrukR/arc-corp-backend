@@ -103,7 +103,7 @@ export class TasksService {
   }
 
   async getTaskCountsByDepartment() {
-    return await this.taskRepository
+    const result = await this.taskRepository
       .createQueryBuilder('task')
       .leftJoin('task.department', 'department')
       .select('department.name', 'departmentName')
@@ -127,5 +127,14 @@ export class TasksService {
       .where('task.deleted_at IS NULL')
       .groupBy('department.departmentId, department.name')
       .getRawMany();
+
+    return result.map((item) => ({
+      departmentId: item.departmentId,
+      departmentName: item.departmentName,
+      pending: parseInt(item.pending, 10),
+      in_progress: parseInt(item.in_progress, 10),
+      completed: parseInt(item.completed, 10),
+      cancelled: parseInt(item.cancelled, 10),
+    }));
   }
 }

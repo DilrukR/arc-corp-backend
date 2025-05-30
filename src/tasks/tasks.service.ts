@@ -184,6 +184,7 @@ export class TasksService {
     const tasks = await this.taskRepository
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.assignedTo', 'user')
+      .leftJoinAndSelect('task.department', 'department')
       .where('user.id = :userId', { userId })
       .andWhere('task.deleted_at IS NULL')
       .getMany();

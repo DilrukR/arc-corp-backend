@@ -14,7 +14,7 @@ import {
 import { User } from './user.entity';
 import { SubTask } from './subtasks.entity';
 import { Department } from './departments.entity';
-import { Comment } from './comment.entity'; // Add this import
+import { Comment } from './comment.entity';
 
 @Entity('tasks')
 export class Task {
@@ -44,6 +44,18 @@ export class Task {
   @Column({ type: 'timestamp', nullable: true })
   deadline: Date;
 
+  // Add start time
+  @Column({ type: 'timestamp', nullable: true, name: 'start_time' })
+  startTime: Date;
+
+  // Add end time
+  @Column({ type: 'timestamp', nullable: true, name: 'end_time' })
+  endTime: Date;
+
+  // Add link field
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  link: string;
+
   @ManyToMany(() => User, (user) => user.tasks, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'assignments',
@@ -55,7 +67,6 @@ export class Task {
   @OneToMany(() => SubTask, (subTask) => subTask.task, { cascade: true })
   subtasks: SubTask[];
 
-  // Add comments relationship
   @OneToMany(() => Comment, (comment) => comment.task, { cascade: true })
   comments: Comment[];
 

@@ -5,6 +5,8 @@ import {
   IsDateString,
   IsPositive,
   IsNumber,
+  IsString,
+  IsUrl,
 } from 'class-validator';
 
 export enum TaskCategory {
@@ -16,10 +18,19 @@ export enum TaskCategory {
   MISCELLANEOUS = 'Miscellaneous',
 }
 
+export enum TaskStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+}
+
 export class CreateTaskDto {
+  @IsString()
   @IsNotEmpty()
   title: string;
 
+  @IsString()
   @IsOptional()
   description?: string;
 
@@ -33,4 +44,16 @@ export class CreateTaskDto {
   @IsOptional()
   @IsDateString()
   deadline?: Date;
+
+  @IsOptional()
+  @IsDateString()
+  startTime?: Date;
+
+  @IsOptional()
+  @IsDateString()
+  endTime?: Date;
+
+  @IsUrl()
+  @IsOptional()
+  link?: string;
 }
